@@ -11,46 +11,18 @@ const api = process.env.API_URL
 app.use(express.json())
 app.use(morgan('tiny'))
 
-const productSchema = mongoose.Schema({
-  name: String,
-  image: String,
-  countInStock: {
-    type: Number,
-    required: true,
-  },
-})
+//Routers
+const categoriesRoutes = require('./routers/categories')
+const productsRoutes = require('./routers/products')
+const usersRoutes = require('./routers/users')
+const ordersRoutes = require('./routers/orders')
 
-const Product = mongoose.model('Product', productSchema)
+app.use(`${api}/categories`, categoriesRoutes)
+app.use(`${api}/products`, productsRoutes)
+app.use(`${api}/orders`, ordersRoutes)
+app.use(`${api}/users`, usersRoutes)
 
-app.get(`${api}/products`, async (req, res) => {
-  const productList = await Product.find()
-
-  if (!productList) {
-    res.status(500).json({ success: false })
-  }
-  res.send(productList)
-})
-
-app.post(`${api}/products`, (req, res) => {
-  const product = new Product({
-    name: req.body.name,
-    image: req.body.image,
-    countInStock: req.body.countInStock,
-  })
-
-  product
-    .save()
-    .then((createdProduct) => {
-      res.status(201).json(createdProduct)
-    })
-    .catch((err) => {
-      res.status(500).json({
-        error: err,
-        success: false,
-      })
-    })
-})
-
+//Database Connection
 mongoose
   .connect(process.env.CONNECT_STRING, {
     useNewUrlParser: true,
@@ -64,6 +36,7 @@ mongoose
     console.log(err)
   })
 
+//Server
 app.listen(3000, () => {
   console.log('server is running on port http://localhost:3000')
 })
