@@ -1,4 +1,4 @@
-const Product = require('../models/product')
+const { Product } = require('../models/product')
 const express = require('express')
 const router = express.Router()
 
@@ -11,7 +11,7 @@ router.get(`/`, async (req, res) => {
   res.send(productList)
 })
 
-router.post(``, (req, res) => {
+router.post(`/`, (req, res) => {
   const product = new Product({
     name: req.body.name,
     image: req.body.image,
